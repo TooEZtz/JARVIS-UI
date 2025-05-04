@@ -1,0 +1,39 @@
+# Integration Placeholders Documentation
+
+## Frontend
+
+1. startSpeechRecognition
+   - Listens to user's speech using the Web Speech API.
+   - On speech end, converts speech to text and calls sendUserTextToBackend.
+
+2. sendUserTextToBackend
+   - Sends recognized text to backend endpoint /api/user-text as JSON.
+   - Placeholder for future: can be extended to send to a more advanced backend for processing.
+
+## Backend (Flask)
+
+1. /api/user-text (POST)
+   - Receives JSON: { \"text\": \"...\" }
+   - Placeholder: Currently writes the text to user_texts.txt (append mode).
+   - Future: Replace this logic to forward/process the text as needed by the main backend.
+
+2. user_texts.txt
+   - Stores all received user texts for debugging/demo purposes.
+
+3. ask_gemini(user_sentence)
+   - Sends a prompt to Gemini with the user's sentence.
+   - Placeholder: You can customize the prompt as needed.
+
+4. synthesize_speech(text)
+   - Sends text to ElevenLabs TTS and returns audio.
+
+5. /api/ask-gemini (POST)
+   - Receives: { "text": "..." }
+   - Returns: audio/mpeg (Gemini's response spoken by ElevenLabs)
+   - Placeholder: Replace Gemini API call or TTS logic as needed.
+
+## Integration Notes
+
+- All endpoints are CORS-enabled for local development.
+- Replace the placeholder logic in /api/user-text with your friend's backend integration when ready.
+- This documentation should be updated as new placeholders or integration points are added.
