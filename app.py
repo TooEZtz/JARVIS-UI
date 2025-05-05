@@ -10,12 +10,15 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": ["http://127.0.0.1:5500", "http://localhost:5500"]}})
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-VOICE_ID = "N2lVS1w4EtoT3dr4eOWO"  # Callum's voice (alternate ID)
+# Updated with the correct voice ID for Callum from ElevenLabs voice library
+VOICE_ID = "N2lVS1w4EtoT3dr4eOWO"  # Callum's voice ID (hoarse, middle-aged male with American accent)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Add your Gemini API key to .env
 
 def ask_gemini(user_sentence):
-    # You will write your own prompt here
-    prompt = f"The user said: {user_sentence}\n[Imagine you are Jarvis, the AI assistant from Iron Man. You are a helpful assistant that can answer questions and help with tasks. the sentence ahead is the user's sentence. you will answer the user's sentence in a way that is helpful and informative. you will also use the tone and personality of Jarvis from Iron Man. the backend is going to do whatever the user wants. you are the voice. you will say like opening this and doing this... in this manner avoid using charecters in your sentences becaue whatever you send will be used in backend to TTS. and dont speak too much just answer in short sentences. only what is required to be said]"
+    # Modified prompt to handle commands directly (without "Jarvis" prefix)
+    # The frontend already removes the "Jarvis" prefix
+    prompt = f"The user said: {user_sentence}\n[Imagine you are Jarvis, the AI assistant from Iron Man. You are a helpful assistant that can answer questions and help with tasks. The user has already activated you by saying 'Jarvis' followed by their request. The text '{user_sentence}' is what comes after the wake word. Answer the user's request in a way that is helpful and informative. Use the tone and personality of Jarvis from Iron Man. The backend is going to do whatever the user wants. You are the voice. You will say things like 'opening this' or 'doing this' in a concise manner. Avoid using special characters in your responses as your response will be used for text-to-speech. Keep your answers short and to the point - only say what is required. DO not ask questions back to the user in any case. DO not use special characters in your responses. no * # and those kind of things please.]"
+    
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     headers = {"Content-Type": "application/json"}
     params = {"key": GEMINI_API_KEY}
@@ -43,8 +46,7 @@ def synthesize_speech(text):
     payload = {
         "text": text,
         "model_id": "eleven_monolingual_v1",
-        "voice_settings": {"stability": 0.5, "similarity_boost": 0.5},
-        "output_format": "mp3_44100_128"
+        "voice_settings": {"stability": 0.5, "similarity_boost": 0.75}
     }
     r = requests.post(url, headers=headers, json=payload, stream=True)
     if r.status_code != 200:

@@ -1,0 +1,995 @@
+@import url('https://fonts.googleapis.com/css2?family=Courier+New:wght@700&display=swap');
+        
+body {
+    margin: 0;
+    overflow: hidden;
+    touch-action: manipulation;
+}
+
+canvas {
+    display: block;
+    background-color: black;
+}
+
+.glow-effect {
+    text-shadow: 0 0 10px currentColor;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    animation: ripple-animation 1s linear;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0;
+    }
+}
+
+.settings-panel {
+    box-shadow: 0 0 20px rgba(0, 220, 255, 0.3);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    cursor: pointer;
+}
+
+.hexagon-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.1;
+}
+
+.scan-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, transparent, currentColor, transparent);
+    animation: scan 3s linear infinite;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+@keyframes scan {
+    0% { top: -2px; }
+    100% { top: 100%; }
+}
+
+.particle {
+    position: absolute;
+    pointer-events: none;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.data-stream {
+    position: fixed;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    opacity: 0.3;
+    pointer-events: none;
+    animation: stream 10s linear infinite;
+    white-space: nowrap;
+}
+
+@keyframes stream {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100vh); }
+}
+
+@keyframes launch-pulse {
+    0% { box-shadow: 0 0 32px 8px #00dcff66, 0 0 0 0 #00dcff00; border-color: #00dcff; }
+    50% { box-shadow: 0 0 64px 24px #00dcffcc, 0 0 0 12px #00dcff33; border-color: #fff; }
+    100% { box-shadow: 0 0 32px 8px #00dcff66, 0 0 0 0 #00dcff00; border-color: #00dcff; }
+}
+.launch-pulse {
+    animation: launch-pulse 1.8s infinite;
+}
+@keyframes sweep {
+    0% { left: -100%; }
+    50% { left: 150%; }
+    100% { left: 150%; }
+}
+.animate-sweep {
+    animation: sweep 2.2s infinite cubic-bezier(.4,0,.2,1);
+}
+.glow-effect {
+    text-shadow: 0 0 16px #00dcff, 0 0 32px #00dcff99;
+}
+#launch-jarvis-btn {
+    transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s;
+}
+#launch-jarvis-btn:hover {
+    transform: scale(1.06) translateY(-2px);
+    box-shadow: 0 0 80px 24px #00dcffcc, 0 0 0 0 #00dcff00;
+}
+.font-orbitron { font-family: 'Orbitron', Arial, sans-serif; }
+.boot-glow {
+    color: #00eaff;
+    text-shadow: 0 0 16px #00eaff, 0 0 32px #00eaff99, 0 0 2px #fff;
+}
+.launch-glow {
+    color: #00eaff;
+    text-shadow: 0 0 24px #00eaff, 0 0 48px #00eaff99, 0 0 2px #fff;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.scanline-flicker {
+    position: relative;
+    overflow: hidden;
+}
+.scanline-flicker::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    background: repeating-linear-gradient(180deg, #fff2 0 1px, transparent 1px 7px);
+    opacity: 0.13;
+    pointer-events: none;
+    z-index: 2;
+    animation: flicker 1.2s infinite linear;
+}
+@keyframes flicker {
+    0%, 100% { opacity: 0.13; }
+    10% { opacity: 0.18; }
+    20% { opacity: 0.10; }
+    30% { opacity: 0.16; }
+    40% { opacity: 0.13; }
+    50% { opacity: 0.20; }
+    60% { opacity: 0.13; }
+    70% { opacity: 0.18; }
+    80% { opacity: 0.10; }
+    90% { opacity: 0.16; }
+}
+.jarvis-launch-btn {
+    background: rgba(0,0,0,0.2);
+    color: #a1bbbf;
+    font-family: 'Orbitron', Arial, sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    border: 2px solid #a1bbbf;
+    border-radius: 50%; /* Make it a circle */
+    box-shadow: 0 0 30px #a1bbbf50, inset 0 0 20px #a1bbbf20;
+    padding: 2rem; /* Equal padding for a perfect circle */
+    text-shadow: 0 0 12px #a1bbbf, 0 0 24px #a1bbbf99;
+    position: relative;
+    z-index: 10;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
+    outline: none;
+    backdrop-filter: blur(4px);
+    width: 110px; /* Fixed width */
+    height: 110px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Power button radial glow effect */
+.power-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(161,187,191,0.8) 0%, rgba(161,187,191,0.1) 70%, rgba(0,0,0,0) 100%);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes power-glow-animation {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(3);
+    }
+}
+
+.power-on .power-glow {
+    animation: power-glow-animation 1.8s ease-out forwards;
+}
+
+/* Inner circular detail for the power button - using a div instead of ::after to avoid conflict */
+.inner-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(161, 187, 191, 0.3);
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+/* Remove the conflicting ::after pseudo-element */
+.jarvis-launch-btn::after {
+    content: none;
+}
+
+.jarvis-launch-btn:hover {
+    box-shadow: 0 0 60px 18px #a1bbbbf0, 0 0 120px 40px #a1bbbf40;
+    background: rgba(10,20,20,0.4);
+    transform: scale(1.05) translateY(-3px);
+    text-shadow: 0 0 16px #a1bbbf, 0 0 32px #a1bbbf;
+}
+
+/* Power button icon styling */
+.power-icon {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    transition: all 0.4s ease;
+}
+
+.power-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 8px;
+    height: 50%;
+    background-color: #a1bbbf;
+    transform: translateX(-50%);
+    border-radius: 4px;
+    box-shadow: 0 0 10px #a1bbbf;
+    transition: all 0.3s ease;
+}
+
+.power-icon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 8px solid #a1bbbf;
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px #a1bbbf;
+    transition: all 0.3s ease;
+}
+
+.jarvis-launch-btn:hover .power-icon::before {
+    box-shadow: 0 0 20px #a1bbbf, 0 0 40px #a1bbbf33;
+    background-color: white;
+}
+
+.jarvis-launch-btn:hover .power-icon::after {
+    box-shadow: 0 0 20px #a1bbbf, 0 0 40px #a1bbbf33;
+    border-color: white;
+}
+
+@keyframes power-pulse {
+    0% { transform: translateX(-50%) scaleY(1); }
+    50% { transform: translateX(-50%) scaleY(0.85); }
+    100% { transform: translateX(-50%) scaleY(1); }
+}
+
+@keyframes ring-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.jarvis-launch-btn:hover .power-icon::before {
+    animation: power-pulse 1.5s infinite ease-in-out;
+}
+
+.jarvis-launch-btn:hover .power-icon::after {
+    animation: ring-pulse 1.5s infinite ease-in-out;
+}
+
+.jarvis-launch-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(161,187,191,0.2),
+        transparent
+    );
+    animation: sweep 3s infinite ease-in-out;
+    z-index: 1;
+}
+
+.jarvis-launch-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    padding: 3px;
+    background: linear-gradient(225deg, #a1bbbf20, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+@keyframes sweep {
+    0% { left: -100%; }
+    50% { left: 150%; }
+    100% { left: 150%; }
+}
+
+/* Typing animation for the launch button */
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-right-color: transparent }
+    50% { border-right-color: #a1bbbf }
+}
+
+.typing-animation {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: 
+        typing 2.5s steps(15, end),
+        blink-caret .75s step-end infinite;
+}
+.hud-backdrop {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+    width: 340px;
+    height: 80px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 1rem;
+    box-shadow: 0 0 24px #00eaff44;
+    z-index: 2;
+    pointer-events: none;
+    filter: blur(0.5px);
+    opacity: 0.92;
+    transition: opacity 0.7s cubic-bezier(.4,0,.2,1);
+}
+
+/* Add these new styles */
+.pulse-dot {
+    animation: pulse-animation 1.5s infinite;
+}
+
+@keyframes pulse-animation {
+    0% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.2; transform: scale(0.8); }
+}
+
+.visualizer-reveal {
+    animation: visualizer-reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: center bottom;
+}
+
+@keyframes visualizer-reveal {
+    0% { opacity: 0; transform: translate(-50%, 20px) scale(0.8); }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.visualizer-hide {
+    animation: visualizer-hide 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@keyframes visualizer-hide {
+    0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, 10px) scale(0.95); }
+}
+
+@keyframes scan-horizontal {
+    0% { transform: translateY(-50vh); }
+    100% { transform: translateY(50vh); }
+}
+
+@keyframes scan-vertical {
+    0% { transform: translateX(-50vw); }
+    100% { transform: translateX(50vw); }
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+@keyframes pulse-slower {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.15); }
+}
+
+.animate-scan-horizontal {
+    animation: scan-horizontal 8s cubic-bezier(0.3, 0, 0.7, 1) infinite;
+}
+
+.animate-scan-vertical {
+    animation: scan-vertical 8s cubic-bezier(0.3, 0, 0.7, 1) infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-pulse-slower {
+    animation: pulse-slower 6s ease-in-out infinite;
+}
+
+.bg-gradient-radial {
+    background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+.jarvis-launch-btn {
+    background: rgba(0,0,0,0.2);
+    color: #a1bbbf;
+    font-family: 'Orbitron', Arial, sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    border: 2px solid #a1bbbf;
+    border-radius: 50%; /* Make it a circle */
+    box-shadow: 0 0 30px #a1bbbf50, inset 0 0 20px #a1bbbf20;
+    padding: 2rem; /* Equal padding for a perfect circle */
+    text-shadow: 0 0 12px #a1bbbf, 0 0 24px #a1bbbf99;
+    position: relative;
+    z-index: 10;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
+    outline: none;
+    backdrop-filter: blur(4px);
+    width: 110px; /* Fixed width */
+    height: 110px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jarvis-launch-btn:hover {
+    box-shadow: 0 0 60px 18px #a1bbbbf0, 0 0 120px 40px #a1bbbf40;
+    background: rgba(10,20,20,0.4);
+    transform: scale(1.05) translateY(-3px);
+    text-shadow: 0 0 16px #a1bbbf, 0 0 32px #a1bbbf;
+}
+
+.jarvis-launch-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(161,187,191,0.2),
+        transparent
+    );
+    animation: sweep 3s infinite ease-in-out;
+    z-index: 1;
+}
+
+.jarvis-launch-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    padding: 3px;
+    background: linear-gradient(225deg, #a1bbbf20, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+@keyframes sweep {
+    0% { left: -100%; }
+    50% { left: 150%; }
+    100% { left: 150%; }
+}
+
+@keyframes power-on {
+    0% { 
+        background-color: #a1bbbf; 
+        box-shadow: 0 0 30px #a1bbbf, 0 0 60px #a1bbbf77;
+        transform: translateX(-50%) scaleY(1);
+    }
+    15% { 
+        background-color: white; 
+        box-shadow: 0 0 40px white, 0 0 80px white;
+        transform: translateX(-50%) scaleY(1.2);
+    }
+    30% { 
+        background-color: #a1bbbf; 
+        box-shadow: 0 0 20px #a1bbbf, 0 0 40px #a1bbbf77;
+        transform: translateX(-50%) scaleY(0.9);
+    }
+    100% { 
+        background-color: white; 
+        box-shadow: 0 0 50px white, 0 0 100px white;
+        transform: translateX(-50%) scaleY(1);
+    }
+}
+
+@keyframes ring-on {
+    0% { 
+        border-color: #a1bbbf; 
+        box-shadow: 0 0 30px #a1bbbf, 0 0 60px #a1bbbf77;
+        transform: scale(1);
+    }
+    15% { 
+        border-color: white; 
+        box-shadow: 0 0 40px white, 0 0 80px white;
+        transform: scale(1.1);
+    }
+    30% { 
+        border-color: #a1bbbf; 
+        box-shadow: 0 0 20px #a1bbbf, 0 0 40px #a1bbbf77;
+        transform: scale(0.95);
+    }
+    100% { 
+        border-color: white; 
+        box-shadow: 0 0 50px white, 0 0 100px white;
+        transform: scale(1.15);
+    }
+}
+
+.power-on .power-icon::before {
+    animation: power-on 1.5s ease-in-out forwards;
+    background-color: white;
+}
+
+.power-on .power-icon::after {
+    animation: ring-on 1.5s ease-in-out forwards;
+    border-color: white;
+}
+
+/* Enhance audio visualizer styles for more impact */
+.audio-visualizer-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px; /* Increased width */
+    height: 6px; /* Increased height */
+    background: rgba(161, 187, 191, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(161, 187, 191, 0.5); /* More intense glow */
+    /* Ensure visualizer is invisible by default and properly transitions */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-out, transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), visibility 0s linear 0.5s;
+}
+
+/* Proper visible state for animation when needed */
+.audio-visualizer-line.ready,
+.audio-visualizer-line.boot-sequence,
+.audio-visualizer-line.speaking-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), visibility 0s linear 0s;
+}
+
+.visualizer-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2px;
+}
+
+.visualizer-bar {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    background: linear-gradient(to top, #a1bbbf 0%, #ffffff 120%); /* Add gradient for depth */
+    margin: 0 1px;
+    transform-origin: bottom;
+    opacity: 0.9; /* Increased opacity */
+    box-shadow: 0 0 12px #a1bbbf; /* Stronger glow */
+    border-radius: 2px;
+}
+
+/* More dramatic animation with higher/spikier values */
+@keyframes visualizer-idle {
+    0%, 100% { transform: scaleY(0.1); }
+    10% { transform: scaleY(2.5); }
+    20% { transform: scaleY(0.3); }
+    30% { transform: scaleY(3.2); }
+    40% { transform: scaleY(0.1); }
+    50% { transform: scaleY(2.8); }
+    60% { transform: scaleY(0.2); }
+    70% { transform: scaleY(2.9); }
+    80% { transform: scaleY(0.15); }
+    90% { transform: scaleY(2.0); }
+}
+
+/* Audio visualizer active/inactive states */
+.visualizer-bar {
+    animation: visualizer-idle 1.5s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+/* When speaking, make the animations faster and more dramatic */
+.speaking-active .visualizer-bar {
+    animation-play-state: running !important;
+    animation-duration: 0.8s !important; /* Faster animation */
+    filter: brightness(1.4) contrast(1.3); /* More vibrant */
+    box-shadow: 0 0 20px #a1bbbf !important; /* Increased glow */
+}
+
+/* New initialization and boot sequence animations */
+@keyframes bar-scan {
+    0% { transform: scaleY(0); opacity: 0; }
+    30% { transform: scaleY(0.7); opacity: 1; }
+    70% { transform: scaleY(0.3); opacity: 1; }
+    100% { transform: scaleY(0.2); opacity: 0.8; }
+}
+
+@keyframes system-ready-pulse {
+    0% { box-shadow: 0 0 15px rgba(161, 187, 191, 0.5); }
+    50% { box-shadow: 0 0 25px rgba(161, 187, 191, 1); }
+    100% { box-shadow: 0 0 15px rgba(161, 187, 191, 0.5); }
+}
+
+/* Ready state adds subtle pulsing to visualizer */
+.audio-visualizer-line.ready {
+    animation: system-ready-pulse 2s infinite ease-in-out;
+}
+
+/* During boot sequence, apply special scanning effect */
+.boot-sequence .visualizer-bar {
+    animation: none !important; /* Disable regular animations during boot sequence */
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease !important;
+}
+
+/* Boot sequence background effect */
+.boot-sequence .audio-visualizer-bg {
+    opacity: 0.4;
+    background: linear-gradient(90deg, rgba(161, 187, 191, 0) 0%, rgba(161, 187, 191, 0.4) 50%, rgba(161, 187, 191, 0) 100%);
+    animation: boot-scan 1.5s linear infinite !important;
+}
+
+@keyframes boot-scan {
+    0% { transform: translateX(-150%); }
+    100% { transform: translateX(150%); }
+}
+
+/* System ready visual indicator at the ends of the visualizer */
+.audio-visualizer-line.ready::before,
+.audio-visualizer-line.ready::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(161, 187, 191, 0.9) 0%, rgba(161, 187, 191, 0) 70%);
+    animation: end-indicator-pulse 2s infinite ease-in-out;
+}
+
+@keyframes end-indicator-pulse {
+    0%, 100% { opacity: 0.7; width: 10px; }
+    50% { opacity: 1; width: 15px; }
+}
+
+/* Ready state animation overrides */
+.ready .visualizer-bar:nth-child(3n+1) {
+    animation: ready-pulse-1 3s infinite ease-in-out !important;
+    animation-play-state: running !important;
+}
+
+.ready .visualizer-bar:nth-child(3n+2) {
+    animation: ready-pulse-2 3.5s infinite ease-in-out !important;
+    animation-play-state: running !important;
+}
+
+.ready .visualizer-bar:nth-child(3n) {
+    animation: ready-pulse-3 4s infinite ease-in-out !important;
+    animation-play-state: running !important;
+}
+
+@keyframes ready-pulse-1 {
+    0%, 100% { transform: scaleY(0.1); }
+    30% { transform: scaleY(0.25); }
+    60% { transform: scaleY(0.15); }
+}
+
+@keyframes ready-pulse-2 {
+    0%, 100% { transform: scaleY(0.15); }
+    40% { transform: scaleY(0.3); }
+    70% { transform: scaleY(0.1); }
+}
+
+@keyframes ready-pulse-3 {
+    0%, 100% { transform: scaleY(0.2); }
+    50% { transform: scaleY(0.35); }
+    80% { transform: scaleY(0.15); }
+}
+
+/* Speaking state overrides all other states */
+.speaking-active .visualizer-bar {
+    animation: visualizer-idle 1.5s ease-in-out infinite !important;
+    animation-play-state: running !important;
+}
+
+.speaking-active.ready,
+.speaking-active.boot-sequence {
+    animation: visualizer-activate 0.3s ease-out forwards !important;
+}
+
+/* Adjust delay for each bar for wave effect */
+.visualizer-bar:nth-child(1) { animation-delay: -0.2s; }
+.visualizer-bar:nth-child(2) { animation-delay: -0.3s; }
+.visualizer-bar:nth-child(3) { animation-delay: -0.4s; }
+.visualizer-bar:nth-child(4) { animation-delay: -0.5s; }
+.visualizer-bar:nth-child(5) { animation-delay: -0.6s; }
+.visualizer-bar:nth-child(6) { animation-delay: -0.7s; }
+.visualizer-bar:nth-child(7) { animation-delay: -0.8s; }
+.visualizer-bar:nth-child(8) { animation-delay: -0.9s; }
+.visualizer-bar:nth-child(9) { animation-delay: -1.0s; }
+.visualizer-bar:nth-child(10) { animation-delay: -1.1s; }
+.visualizer-bar:nth-child(11) { animation-delay: -1.2s; }
+.visualizer-bar:nth-child(12) { animation-delay: -1.3s; }
+.visualizer-bar:nth-child(13) { animation-delay: -1.4s; }
+.visualizer-bar:nth-child(14) { animation-delay: -1.5s; }
+.visualizer-bar:nth-child(15) { animation-delay: -1.6s; }
+.visualizer-bar:nth-child(16) { animation-delay: -1.7s; }
+.visualizer-bar:nth-child(17) { animation-delay: -1.8s; }
+.visualizer-bar:nth-child(18) { animation-delay: -1.9s; }
+.visualizer-bar:nth-child(19) { animation-delay: -2.0s; }
+.visualizer-bar:nth-child(20) { animation-delay: -2.1s; }
+.visualizer-bar:nth-child(21) { animation-delay: -2.2s; }
+.visualizer-bar:nth-child(22) { animation-delay: -2.3s; }
+.visualizer-bar:nth-child(23) { animation-delay: -2.4s; }
+.visualizer-bar:nth-child(24) { animation-delay: -2.5s; }
+.visualizer-bar:nth-child(25) { animation-delay: -2.6s; }
+.visualizer-bar:nth-child(26) { animation-delay: -2.7s; }
+.visualizer-bar:nth-child(27) { animation-delay: -2.8s; }
+.visualizer-bar:nth-child(28) { animation-delay: -2.9s; }
+.visualizer-bar:nth-child(29) { animation-delay: -3.0s; }
+.visualizer-bar:nth-child(30) { animation-delay: -3.1s; }
+.visualizer-bar:nth-child(31) { animation-delay: -3.2s; }
+.visualizer-bar:nth-child(32) { animation-delay: -3.3s; }
+.visualizer-bar:nth-child(33) { animation-delay: -3.4s; }
+.visualizer-bar:nth-child(34) { animation-delay: -3.5s; }
+.visualizer-bar:nth-child(35) { animation-delay: -3.6s; }
+.visualizer-bar:nth-child(36) { animation-delay: -3.7s; }
+.visualizer-bar:nth-child(37) { animation-delay: -3.8s; }
+.visualizer-bar:nth-child(38) { animation-delay: -3.9s; }
+.visualizer-bar:nth-child(39) { animation-delay: -4.0s; }
+.visualizer-bar:nth-child(40) { animation-delay: -4.1s; }
+
+/* Position the visualizer between JARVIS text and console */
+.audio-visualizer-line.top-visualizer {
+    bottom: 320px; /* Position between JARVIS and console */
+}
+
+/* Remove the old visualizer container styling */
+#visualizer-container {
+    display: none !important;
+}
+
+/* Visualizer background effect */
+.audio-visualizer-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(161, 187, 191, 0) 0%, rgba(161, 187, 191, 0.2) 50%, rgba(161, 187, 191, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* New ready state background effect */
+.ready .audio-visualizer-bg {
+    opacity: 0.3;
+    animation: visualizer-bg-scan 4s linear infinite;
+}
+
+@keyframes visualizer-bg-scan {
+    0% { transform: translateX(-120%); }
+    100% { transform: translateX(120%); }
+}
+
+.speaking-active .audio-visualizer-bg {
+    opacity: 1;
+    background: linear-gradient(90deg, 
+        rgba(161, 187, 191, 0) 0%, 
+        rgba(161, 187, 191, 0.7) 50%, 
+        rgba(161, 187, 191, 0) 100%
+    );
+    animation: visualizer-bg-pulse 1.2s linear infinite;
+}
+
+@keyframes visualizer-bg-pulse {
+    0% { transform: translateX(-100%); filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(15deg); }
+    100% { transform: translateX(100%); filter: hue-rotate(0deg); }
+}
+
+/* Add dramatic flash when activated */
+@keyframes visualizer-activate {
+    0% { box-shadow: 0 0 8px rgba(161, 187, 191, 0.5); opacity: 0.8; }
+    50% { box-shadow: 0 0 30px rgba(161, 187, 191, 1); opacity: 1; }
+    100% { box-shadow: 0 0 12px rgba(161, 187, 191, 0.6); opacity: 0.9; }
+}
+
+.speaking-active {
+    animation: visualizer-activate 0.3s ease-out forwards;
+}
+
+/* Add subtle pulsing effect even when inactive */
+.audio-visualizer-line:not(.speaking-active) .visualizer-bar:nth-child(3n) {
+    animation: visualizer-pulse 2s ease-in-out infinite;
+    animation-play-state: running;
+    transform: scaleY(0.2);
+}
+
+/* Add ambient pulsing */
+@keyframes visualizer-pulse {
+    0%, 100% { transform: scaleY(0.1); box-shadow: 0 0 5px rgba(161, 187, 191, 0.3); }
+    50% { transform: scaleY(0.2); box-shadow: 0 0 8px rgba(161, 187, 191, 0.6); }
+}
+
+/* Add shimmer effect to visualizer bars */
+.visualizer-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, 
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 40%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        rgba(255, 255, 255, 0.1) 60%, 
+        rgba(255, 255, 255, 0) 100%
+    );
+    opacity: 0.7;
+}
+
+/* Add glowing edges to the visualizer */
+.audio-visualizer-line::before,
+.audio-visualizer-line::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(161, 187, 191, 0.7) 0%, rgba(161, 187, 191, 0) 70%);
+}
+
+.audio-visualizer-line::before {
+    left: -5px;
+}
+
+.audio-visualizer-line::after {
+    right: -5px;
+}
+
+/* Add radial pulse when activated */
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(161, 187, 191, 0.7);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes pulse-ring-animation {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.9;
+        border-width: 12px;
+        border-color: rgba(161, 187, 191, 0.9);
+    }
+    40% {
+        opacity: 0.8;
+        border-color: rgba(161, 187, 191, 0.7);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(9);
+        opacity: 0;
+        border-width: 1px;
+        border-color: rgba(161, 187, 191, 0.1);
+    }
+}
+
+.pulse-ring.animate {
+    animation: pulse-ring-animation 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Add a listening indicator when JARVIS is waiting for commands */
+.audio-visualizer-line.listening {
+    box-shadow: 0 0 15px rgba(123, 213, 245, 0.5); /* Subtle blue glow */
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Subtle pulsing animation for the listening state */
+@keyframes listening-pulse {
+    0% { box-shadow: 0 0 15px rgba(123, 213, 245, 0.4); }
+    50% { box-shadow: 0 0 25px rgba(123, 213, 245, 0.6); }
+    100% { box-shadow: 0 0 15px rgba(123, 213, 245, 0.4); }
+}
+
+.audio-visualizer-line.listening {
+    animation: listening-pulse 3s infinite ease-in-out;
+}
+
+/* Processing visual indicator when waiting for Gemini response */
+.audio-visualizer-line.processing {
+    box-shadow: 0 0 20px rgba(235, 161, 52, 0.6); /* Orange glow */
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Processing animation shows a scanning effect */
+@keyframes processing-scan {
+    0% { transform: translateX(-150%); }
+    100% { transform: translateX(150%); }
+}
+
+.audio-visualizer-line.processing .audio-visualizer-bg {
+    opacity: 0.6;
+    background: linear-gradient(90deg, 
+        rgba(235, 161, 52, 0) 0%, 
+        rgba(235, 161, 52, 0.5) 50%, 
+        rgba(235, 161, 52, 0) 100%
+    );
+    animation: processing-scan 2s linear infinite !important;
+}
+
+/* Pulsing bars for processing state */
+.processing .visualizer-bar {
+    animation: processing-pulse 1.2s ease-in-out infinite !important;
+    animation-play-state: running !important;
+}
+
+@keyframes processing-pulse {
+    0%, 100% { transform: scaleY(0.2); }
+    50% { transform: scaleY(0.5); }
+}

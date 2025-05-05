@@ -1,39 +1,374 @@
-# Integration Placeholders Documentation
+# JARVIS UI System Documentation
 
-## Frontend
+## Overview
 
-1. startSpeechRecognition
-   - Listens to user's speech using the Web Speech API.
-   - On speech end, converts speech to text and calls sendUserTextToBackend.
+JARVIS is an advanced voice-controlled assistant interface featuring a futuristic UI inspired by sci-fi interfaces. The system provides continuous voice recognition, real-time visual feedback, and spoken responses powered by Gemini AI.
 
-2. sendUserTextToBackend
-   - Sends recognized text to backend endpoint /api/user-text as JSON.
-   - Placeholder for future: can be extended to send to a more advanced backend for processing.
+This interface implements a sophisticated state management system to maintain continuous listening while providing visual feedback, handling timeouts, and managing the complete interaction lifecycle.
 
-## Backend (Flask)
+## Core Components
 
-1. /api/user-text (POST)
-   - Receives JSON: { \"text\": \"...\" }
-   - Placeholder: Currently writes the text to user_texts.txt (append mode).
-   - Future: Replace this logic to forward/process the text as needed by the main backend.
+### 1. Speech Recognition System
 
-2. user_texts.txt
-   - Stores all received user texts for debugging/demo purposes.
+- **Continuous Listening**: JARVIS listens continuously using the Web Speech API, automatically restarting recognition when needed
+  ```javascript
+  // Core listening implementation
+  function startContinuousListening() {
+    if (isListening || isSpeaking) return;
+    recognitionRestartPending = true;
+    
+    const recognition = new webkitSpeechRecognition();
+    recognitionInstance = recognition;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.maxAlternatives = 1;
+    
+    // Configure handlers and start
+    // ...
+    recognition.start();
+  }
+  ```
 
-3. ask_gemini(user_sentence)
-   - Sends a prompt to Gemini with the user's sentence.
-   - Placeholder: You can customize the prompt as needed.
+- **Wake Word Detection**: Recognizes "Jarvis" as a wake word (except for the first command after startup)
+  ```javascript
+  // Wake word detection logic
+  if (transcript.startsWith('jarvis')) {
+    const command = transcript.substring(6).trim();
+    if (command) {
+      console.log('JARVIS UI: Wake word detected, processing: ' + command);
+      sendToGemini(command);
+    }
+  }
+  ```
 
-4. synthesize_speech(text)
-   - Sends text to ElevenLabs TTS and returns audio.
+- **Command Processing**: Extracts commands following the wake word and sends them to the backend
+- **First Command Handling**: Special handling for the first command after startup (no wake word required)
+  ```javascript
+  // First command special handling
+  if (isFirstCommand) {
+    console.log('JARVIS UI: Processing first command directly: ' + transcript);
+    sendToGemini(transcript);
+    isFirstCommand = false;
+  }
+  ```
 
-5. /api/ask-gemini (POST)
-   - Receives: { "text": "..." }
-   - Returns: audio/mpeg (Gemini's response spoken by ElevenLabs)
-   - Placeholder: Replace Gemini API call or TTS logic as needed.
+- **Error Recovery States**: Manages various error conditions and automatically restarts listening
+  - Automatic recovery from "no-speech" errors
+  - Handling of network interruptions
+  - Recovery from recognition API errors
 
-## Integration Notes
+### 2. Visual Feedback System
 
-- All endpoints are CORS-enabled for local development.
-- Replace the placeholder logic in /api/user-text with your friend's backend integration when ready.
-- This documentation should be updated as new placeholders or integration points are added.
+- **Audio Visualizer States**: The system uses CSS classes to represent different states:
+  ```javascript
+  // Adding the listening state
+  visualizerLine.classList.add('listening');
+  
+  // Switching to processing state
+  visualizerLine.classList.remove('listening');
+  visualizerLine.classList.add('processing');
+  
+  // Switching to speaking state
+  visualizerLine.classList.remove('processing');
+  visualizerLine.classList.add('speaking-active');
+  ```
+
+- **CSS Animations for Each State**:
+  ```css
+  /* Listening state */
+  .audio-visualizer-line.listening {
+    animation: listening-pulse 3s infinite ease-in-out;
+  }
+  
+  /* Processing state */
+  .audio-visualizer-line.processing .audio-visualizer-bg {
+    animation: processing-scan 2s linear infinite !important;
+  }
+  
+  /* Speaking state */
+  .speaking-active .visualizer-bar {
+    animation: visualizer-idle 0.8s ease-in-out infinite !important;
+  }
+  ```
+
+- **Bar Generation**: Dynamically creates visualizer bars with varying properties
+  ```javascript
+  // Creating visualizer bars
+  for (let i = 0; i < barCount; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'visualizer-bar';
+    
+    // Randomize properties for organic appearance
+    const speed = 0.8 + Math.random() * 0.8;
+    bar.style.animationDuration = `${speed}s`;
+    
+    visualizerContainer.appendChild(bar);
+  }
+  ```
+
+### 3. Timeout Handling
+
+- **Request Timeout Implementation**:
+  ```javascript
+  // Setting timeout for Gemini requests
+  geminiRequestTimeout = setTimeout(handleGeminiTimeout, 15000);
+  
+  // Timeout handler
+  function handleGeminiTimeout() {
+    if (awaitingGeminiResponse) {
+      console.error('JARVIS UI: Gemini Request Timeout');
+      requestTimedOut = true;
+      speakTimeoutMessage();
+      awaitingGeminiResponse = false;
+    }
+    geminiRequestTimeout = null;
+  }
+  ```
+
+- **Late Response Handling**: Multiple safeguards to prevent late responses from being processed
+  ```javascript
+  // First check when response arrives
+  if (requestTimedOut) {
+    console.log('JARVIS UI: Discarding late response because request timed out');
+    return;
+  }
+  
+  // Second check before playing audio
+  audio.addEventListener('canplaythrough', () => {
+    if (requestTimedOut) {
+      console.log('JARVIS UI: Discarding late response audio');
+      URL.revokeObjectURL(url);
+      return;
+    }
+    // Play response...
+  });
+  ```
+
+- **Resource Management**: Properly cleans up URLs and audio resources
+  ```javascript
+  // Clean up URLs when done
+  URL.revokeObjectURL(url);
+  ```
+
+### 4. State Transition System
+
+- **State Machine Design**: The system implements a state machine with well-defined transitions:
+  - IDLE → LISTENING: When system starts or after response
+  - LISTENING → PROCESSING: When command detected
+  - PROCESSING → SPEAKING: When response received
+  - PROCESSING → TIMEOUT: When request times out
+  - SPEAKING → LISTENING: When response completes
+  - ERROR → LISTENING: Automatic recovery
+
+- **Flags and Variables**: 
+  ```javascript
+  let isSpeaking = false;           // Speaking state
+  let isListening = false;          // Listening state
+  let recognitionRestartPending;    // Prevents duplicate starts
+  let awaitingGeminiResponse;       // Processing state
+  let requestTimedOut;              // Timeout state
+  ```
+
+## Backend Integration Details
+
+### 1. API Endpoints
+
+- **/api/user-text (POST)**:
+  ```javascript
+  // Client-side implementation
+  function sendUserTextToBackend(text) {
+    fetch('http://localhost:5000/api/user-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+  }
+  
+  // Server-side implementation (Flask)
+  @app.route('/api/user-text', methods=['POST'])
+  def receive_user_text():
+    data = request.json
+    user_text = data.get('text', '')
+    with open('user_texts.txt', 'a') as f:
+        f.write(f"{datetime.now()}: {user_text}\n")
+    return jsonify({"status": "success"})
+  ```
+
+- **/api/ask-gemini (POST)**:
+  ```javascript
+  // Client-side implementation
+  async function sendToGemini(text) {
+    const response = await fetch('http://localhost:5000/api/ask-gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    
+    // Process response...
+  }
+  
+  // Server-side implementation (Flask)
+  @app.route('/api/ask-gemini', methods=['POST'])
+  def ask_gemini_endpoint():
+    data = request.json
+    user_text = data.get('text', '')
+    
+    # Get Gemini response
+    gemini_response = ask_gemini(user_text)
+    
+    # Synthesize speech
+    audio_data = synthesize_speech(gemini_response)
+    
+    return Response(audio_data, mimetype='audio/mpeg')
+  ```
+
+### 2. Configuration Options
+
+- **Recognition Language**: 
+  ```javascript
+  recognition.lang = 'en-US'; // Can be modified for other languages
+  ```
+
+- **Theme Color**: 
+  ```javascript
+  state.themeColor = '#00DCFF'; // Default blue theme, customizable via UI
+  ```
+
+- **Timeout Duration**: 
+  ```javascript
+  geminiRequestTimeout = setTimeout(handleGeminiTimeout, 15000); // 15 seconds
+  ```
+
+## Advanced Features
+
+### 1. Speech Synthesis Control
+
+The system uses ElevenLabs TTS with specific API configurations:
+
+```python
+# Server-side TTS implementation
+def synthesize_speech(text):
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
+    
+    headers = {
+        "Accept": "audio/mpeg",
+        "Content-Type": "application/json",
+        "xi-api-key": ELEVEN_API_KEY
+    }
+    
+    data = {
+        "text": text,
+        "model_id": "eleven_monolingual_v1",
+        "voice_settings": {
+            "stability": 0.5,
+            "similarity_boost": 0.75
+        }
+    }
+    
+    response = requests.post(url, json=data, headers=headers)
+    return response.content
+```
+
+### 2. Audio Visualizer Customization
+
+The audio visualizer can be extensively customized:
+
+- **Bar Count**: Default is 40 bars but can be adjusted for different densities
+- **Animation Speed**: Can be customized via CSS animation duration properties
+- **Color Schemes**: Uses CSS variables that can be modified
+- **Sizes and Positioning**: Configurable via CSS
+
+### 3. Web Audio API Integration
+
+The system uses Web Audio API for sound generation:
+
+```javascript
+// Example of sound generation for system ready
+function playSystemReadySound() {
+  if (!audioContext) initAudioContext();
+  
+  const oscillator1 = audioContext.createOscillator();
+  const oscillator2 = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  
+  oscillator1.type = 'sine';
+  oscillator1.frequency.setValueAtTime(880, audioContext.currentTime);
+  oscillator1.frequency.exponentialRampToValueAtTime(440, audioContext.currentTime + 0.5);
+  
+  // Connect and play the sound
+  // ...
+}
+```
+
+## Performance Considerations
+
+- **Memory Management**: The system properly cleans up resources:
+  - Audio URLs are revoked after use
+  - Event listeners are properly managed
+  - Timeout handlers are cleared when no longer needed
+
+- **CPU Usage Optimization**:
+  - Animation frames are efficiently managed
+  - CSS transitions are used instead of JavaScript when possible
+  - Idle animations use less intensive effects
+
+- **Network Bandwidth**:
+  - Audio is streamed efficiently
+  - Requests are properly aborted when no longer needed
+  - Response caching could be implemented for repetitive responses
+
+## Deployment Requirements
+
+- Modern browser with Web Speech API support (Chrome recommended)
+- Local Flask server running on port 5000
+- Gemini API key set in environment variables
+- ElevenLabs API key set in environment variables
+- WebAudio API support for sound effects
+
+## Debugging
+
+The system provides extensive console logging for debugging:
+
+```javascript
+// Example of the logging system
+console.log('JARVIS UI: Initializing Audio Visualizer');
+console.log('JARVIS UI: Listening for wake word');
+console.error('JARVIS UI: Recognition Error - ' + event.error);
+console.log('JARVIS UI: Discarding late response because request timed out');
+```
+
+## User Configuration
+
+Users can customize several aspects of the interface:
+
+- **Theme Color**: Via the color picker in settings
+- **Shape Type**: Different visualization shapes (circle, square, etc.)
+- **Ripple Speed**: Animation speed for interactive effects
+
+## Security Considerations
+
+- API keys are stored server-side only
+- User voice data is processed locally when possible
+- No persistent storage of user voice data
+- Network requests use HTTPS when deployed to production
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+- **Speech Recognition Not Starting**:
+  - Check browser permissions
+  - Verify microphone access
+  - Ensure compatible browser (Chrome recommended)
+
+- **Visualizer Not Appearing**:
+  - Check console for element errors
+  - Verify CSS classes are applied correctly
+  - Check if container elements exist in DOM
+
+- **Frequent Timeouts**:
+  - Check network connection
+  - Verify backend server is running
+  - Check API keys are valid
+  - Consider increasing timeout duration for slow connections
