@@ -81,6 +81,22 @@ JARVIS can be customized to suit your preferences:
 - Visual theme adjustments via CSS variables
 - Response behavior configuration
 
+## 📊 Repository Stats
+
+<div align="center">
+
+![GitHub License](https://img.shields.io/github/license/shalinbhatt/jarvis?style=for-the-badge)
+![GitHub Stars](https://img.shields.io/github/stars/shalinbhatt/jarvis?style=for-the-badge)
+![GitHub Forks](https://img.shields.io/github/forks/shalinbhatt/jarvis?style=for-the-badge)
+![GitHub Issues](https://img.shields.io/github/issues/shalinbhatt/jarvis?style=for-the-badge)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/shalinbhatt/jarvis?style=for-the-badge)
+
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=shalinbhatt&layout=compact&theme=dark" alt="Top Languages" />
+
+<img src="https://github-readme-stats.vercel.app/api?username=shalinbhatt&show_icons=true&theme=dark" alt="GitHub Stats" />
+
+</div>
+
 ## 📝 License
 
 MIT
