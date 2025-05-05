@@ -85,15 +85,15 @@ JARVIS can be customized to suit your preferences:
 
 <div align="center">
 
-![GitHub License](https://img.shields.io/github/license/shalinbhatt/jarvis?style=for-the-badge)
-![GitHub Stars](https://img.shields.io/github/stars/shalinbhatt/jarvis?style=for-the-badge)
-![GitHub Forks](https://img.shields.io/github/forks/shalinbhatt/jarvis?style=for-the-badge)
-![GitHub Issues](https://img.shields.io/github/issues/shalinbhatt/jarvis?style=for-the-badge)
-![GitHub Pull Requests](https://img.shields.io/github/issues-pr/shalinbhatt/jarvis?style=for-the-badge)
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=shalinbhatt&layout=compact&theme=dark" alt="Top Languages" />
-
-<img src="https://github-readme-stats.vercel.app/api?username=shalinbhatt&show_icons=true&theme=dark" alt="GitHub Stats" />
+![GitHub License](https://img.shields.io/github/license/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Stars](https://img.shields.io/github/stars/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Forks](https://img.shields.io/github/forks/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Issues](https://img.shields.io/github/issues/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Last Commit](https://img.shields.io/github/last-commit/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Repo Size](https://img.shields.io/github/repo-size/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Language Count](https://img.shields.io/github/languages/count/TooEZtz/JARVIS-UI?style=for-the-badge)
+![GitHub Top Language](https://img.shields.io/github/languages/top/TooEZtz/JARVIS-UI?style=for-the-badge)
 
 </div>
 
